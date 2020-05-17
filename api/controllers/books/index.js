@@ -1,9 +1,15 @@
 const express = require('express');
+const fs = require('fs');
+const morgan = require('morgan');
 const router = express.Router();
 const dateUtilities = require('./../../utilities/date');
 
+let accessLogStream = fs.createWriteStream('./files/access.log', { flags: 'a' })
+
 const books = require('./../../services/books');
 const auth = require('./../../middleware/authorization');
+
+router.use(morgan('combined', { stream: accessLogStream }))
 
 router.route('/')
 	.get((req, res) => {

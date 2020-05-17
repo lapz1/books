@@ -1,8 +1,19 @@
 //Modules
+const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const config = require('./../../config');
 
+function crearLog(username, method, path){
+	let linea = Date.now() + ", " + username + ", " + method + " " + path + "\r\n";
+	fs.appendFile('./files/audits.log', linea, (err) => {
+		if(err){
+			console.log(err);
+		}
+	});
+}
+
 const auth = (req, res, next) => {
+	let username = req.header("username");
 	let token = req.header("token");
 	var decode;	
 	try{
@@ -12,6 +23,7 @@ const auth = (req, res, next) => {
 	}
 	
 	if(!!decode){
+		crearLog(username, req.method, req.path);
 		next();
 	} else {
 		res
